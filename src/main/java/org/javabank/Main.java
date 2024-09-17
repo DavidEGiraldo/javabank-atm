@@ -2,12 +2,24 @@ package org.javabank;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello from JavaBank ATM! Version control with Git.");
+        // Basic Varibles
+        String accountNumber = "123456789";
+        double balance = 1500.75;
+        int pin = 1234;
 
-        try {
-            int result = 10/0;
-        } catch (ArithmeticException e) {
-            System.out.println("You can't divide by zero!");
+        // Array of transaction amounts
+        int[] transactionAmounts = {200, -100, 50};
+
+        // Operations with variables
+        balance += transactionAmounts[0]; // Deposit
+        if (balance > 0 && pin == 1234) {
+            System.out.println("Access granted");
         }
+
+        // Operators usage
+        balance++; // Increment
+        String status = (balance < 0) ? "Debt" : "Credit";
+        System.out.println("Account status: " + status);
+    }
     }
 }
