@@ -49,7 +49,7 @@ public class JavaBank {
     private boolean authenticateAccount(Account account) {
         for (int i = 0; i < MAX_LOGIN_ATTEMPTS; i++) {
             String pin = ConsoleUtils.promptForInput("Enter PIN: ");
-            if (account.getPin().equals(pin)) {
+            if (account.authenticate(pin)) {
                 return true;
             } else {
                 ConsoleUtils.printMessage("Incorrect PIN. Attempts remaining: " + (MAX_LOGIN_ATTEMPTS - i - 1), MessageType.WARNING);

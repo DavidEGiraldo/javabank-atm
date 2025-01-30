@@ -1,9 +1,11 @@
 package org.javabank.accounts;
 
+import org.javabank.utils.Authenticable;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Account {
+public abstract class Account implements Authenticable {
     private final String accountId;
     private final String pin;
     protected double balance;
@@ -47,6 +49,11 @@ public abstract class Account {
 
     protected void addTransaction(String transaction) {
         transactionHistory.add(transaction);
+    }
+
+    @Override
+    public boolean authenticate(String inputPin) {
+        return this.pin.equals(inputPin);
     }
 
     public abstract void applyAccountSpecificRules();
