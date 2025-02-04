@@ -4,6 +4,7 @@ import org.javabank.accounts.Account;
 import org.javabank.accounts.CheckingAccount;
 import org.javabank.accounts.SavingsAccount;
 import org.javabank.accounts.BusinessAccount;
+import org.javabank.ex.InsufficientFundsException;
 import org.javabank.utils.ConsoleUtils;
 import org.javabank.utils.MessageType;
 
@@ -110,7 +111,7 @@ public class JavaBank {
             ConsoleUtils.printMessage("Withdrawal successful. New Balance: $" + formatBalance(account.getBalance()), MessageType.SUCCESS);
         } catch (NumberFormatException e) {
             ConsoleUtils.printMessage("Invalid input. Please enter a valid number.", MessageType.ERROR);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | InsufficientFundsException e) {
             ConsoleUtils.printMessage(e.getMessage(), MessageType.ERROR);
         }
     }

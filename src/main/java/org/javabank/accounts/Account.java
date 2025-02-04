@@ -1,5 +1,6 @@
 package org.javabank.accounts;
 
+import org.javabank.ex.InsufficientFundsException;
 import org.javabank.utils.Authenticable;
 
 import java.util.ArrayList;
@@ -35,9 +36,12 @@ public abstract class Account implements Authenticable {
         addTransaction("Deposited: $" + amount);
     }
 
-    public void withdraw(double amount) {
+    public void withdraw(double amount) throws InsufficientFundsException {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive.");
+        }
         if (amount > balance) {
-            throw new IllegalArgumentException("Insufficient balance.");
+            throw new InsufficientFundsException("Insufficient funds. You only have $" + balance + " available.");
         }
         balance -= amount;
         addTransaction("Withdrew: $" + amount);
