@@ -5,6 +5,7 @@ import org.javabank.accounts.CheckingAccount;
 import org.javabank.accounts.SavingsAccount;
 import org.javabank.accounts.BusinessAccount;
 import org.javabank.ex.InsufficientFundsException;
+import org.javabank.ex.InvalidAccountException;
 import org.javabank.utils.ConsoleUtils;
 import org.javabank.utils.MessageType;
 
@@ -73,15 +74,17 @@ public class JavaBank {
             ConsoleUtils.printMessage("\n--- Main Menu ---", MessageType.INFO);
             System.out.println("1. Deposit");
             System.out.println("2. Withdraw");
-            System.out.println("3. View Transactions");
-            System.out.println("4. Exit");
+            System.out.println("3. Transfer Money");
+            System.out.println("4. View Transactions");
+            System.out.println("5. Exit");
             String choice = ConsoleUtils.promptForInput("Choose an option: ");
 
             switch (choice) {
                 case "1" -> handleDeposit(account);
                 case "2" -> handleWithdrawal(account);
-                case "3" -> viewTransactions(account);
-                case "4" -> {
+                case "3" -> handleTransfer(account);
+                case "4" -> viewTransactions(account);
+                case "5" -> {
                     ConsoleUtils.printMessage("Thank you for using JavaBank. Have a great day!", MessageType.SUCCESS);
                     exit = true;
                 }
@@ -112,6 +115,20 @@ public class JavaBank {
         } catch (NumberFormatException e) {
             ConsoleUtils.printMessage("Invalid input. Please enter a valid number.", MessageType.ERROR);
         } catch (IllegalArgumentException | InsufficientFundsException e) {
+            ConsoleUtils.printMessage(e.getMessage(), MessageType.ERROR);
+        }
+    }
+
+    private void handleTransfer(Account account) {
+        String targetAccountId = ConsoleUtils.promptForInput("Enter the target account ID: ");
+        String amountStr = ConsoleUtils.promptForInput("Enter transfer amount: ");
+        try {
+            double amount = Double.parseDouble(amountStr);
+            account.transfer(amount, targetAccountId, accounts);
+            ConsoleUtils.printMessage("Transfer successful. New Balance: $" + formatBalance(account.getBalance()), MessageType.SUCCESS);
+        } catch (NumberFormatException e) {
+            ConsoleUtils.printMessage("Invalid input. Please enter a valid number.", MessageType.ERROR);
+        } catch (InsufficientFundsException | InvalidAccountException | IllegalArgumentException e) {
             ConsoleUtils.printMessage(e.getMessage(), MessageType.ERROR);
         }
     }
