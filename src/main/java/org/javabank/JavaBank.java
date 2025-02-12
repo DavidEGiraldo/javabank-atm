@@ -8,9 +8,11 @@ import org.javabank.ex.InsufficientFundsException;
 import org.javabank.ex.InvalidAccountException;
 import org.javabank.utils.ConsoleUtils;
 import org.javabank.utils.MessageType;
+import org.javabank.utils.TransactionLogger;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class JavaBank {
@@ -76,7 +78,8 @@ public class JavaBank {
             System.out.println("2. Withdraw");
             System.out.println("3. Transfer Money");
             System.out.println("4. View Transactions");
-            System.out.println("5. Exit");
+            System.out.println("5. View All Transactions (File)");
+            System.out.println("6. Exit");
             String choice = ConsoleUtils.promptForInput("Choose an option: ");
 
             switch (choice) {
@@ -84,7 +87,8 @@ public class JavaBank {
                 case "2" -> handleWithdrawal(account);
                 case "3" -> handleTransfer(account);
                 case "4" -> viewTransactions(account);
-                case "5" -> {
+                case "5" -> viewAllTransactionsFromFile();
+                case "6" -> {
                     ConsoleUtils.printMessage("Thank you for using JavaBank. Have a great day!", MessageType.SUCCESS);
                     exit = true;
                 }
@@ -139,6 +143,17 @@ public class JavaBank {
             ConsoleUtils.printMessage("No transactions available.", MessageType.INFO);
         } else {
             account.getTransactionHistory().forEach(System.out::println);
+        }
+    }
+
+    private void viewAllTransactionsFromFile() {
+        ConsoleUtils.printMessage("Transaction Log History:", MessageType.INFO);
+        List<String> transactions = TransactionLogger.readTransactions();
+
+        if (transactions.isEmpty()) {
+            ConsoleUtils.printMessage("No transactions recorded.", MessageType.INFO);
+        } else {
+            transactions.forEach(System.out::println);
         }
     }
 

@@ -3,6 +3,7 @@ package org.javabank.accounts;
 import org.javabank.ex.InsufficientFundsException;
 import org.javabank.ex.InvalidAccountException;
 import org.javabank.utils.Authenticable;
+import org.javabank.utils.TransactionLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +35,22 @@ public abstract class Account implements Authenticable {
     }
 
     public void deposit(double amount) {
+        deposit(amount, false);
+    }
+
+    private void deposit(double amount, boolean silent) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Deposit amount must be positive.");
         }
         balance += amount;
-        addTransaction("Deposited: $" + amount);
+        if (!silent) logAndStoreTransaction("Deposited: $" + amount);
     }
 
     public void withdraw(double amount) throws InsufficientFundsException {
+        withdraw(amount, false);
+    }
+
+    private void withdraw(double amount, boolean silent) throws InsufficientFundsException {
         if (amount <= 0) {
             throw new IllegalArgumentException("Withdrawal amount must be positive.");
         }
@@ -49,7 +58,7 @@ public abstract class Account implements Authenticable {
             throw new InsufficientFundsException("Insufficient funds. You only have $" + balance + " available.");
         }
         balance -= amount;
-        addTransaction("Withdrew: $" + amount);
+        if (!silent) logAndStoreTransaction("Withdrew: $" + amount);
     }
 
     public void transfer(double amount, String targetAccountId, Map<String, Account> accounts) throws InsufficientFundsException, InvalidAccountException {
@@ -63,18 +72,20 @@ public abstract class Account implements Authenticable {
             throw new InsufficientFundsException("Insufficient funds. You only have $" + balance + " available.");
         }
 
-        this.withdraw(amount);
-        targetAccount.deposit(amount);
-        addTransaction("Transferred: $" + amount + " to " + targetAccountId);
-        targetAccount.addTransaction("Received: $" + amount + " from " + this.accountId);
+        this.withdraw(amount, true);
+        targetAccount.deposit(amount, true);
+
+        logAndStoreTransaction("Transferred: $" + amount + " to " + targetAccountId);
+        targetAccount.logAndStoreTransaction("Received: $" + amount + " from " + this.accountId);
     }
 
     public List<String> getTransactionHistory() {
         return transactionHistory;
     }
 
-    protected void addTransaction(String transaction) {
+    private void logAndStoreTransaction(String transaction) {
         transactionHistory.add(transaction);
+        TransactionLogger.logTransaction("[" + accountId + "] " + transaction);
     }
 
     @Override
